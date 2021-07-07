@@ -1,0 +1,36 @@
+#include <pawn.hpp>
+#include <iostream>
+
+// See difference between class Pawn : virtual public Material and
+// class Pawn : public Material
+
+// void Pawn::projectAttack(Chessboard& mainBoard)
+// {
+//     if (colored_)
+//         forward(file_, rank_, mainBoard);
+//     else
+//         backward(file_, rank_, mainBoard);
+// }
+
+std::string Pawn::getHTML()
+{
+    return colored_ ? "&#9817;" : "&#9823;";
+}
+
+char Pawn::getTypeOfMaterial(){
+    std::cout << "colored_: " << colored_ << std::endl;
+    return colored_ ? 'P' : 'p';
+}
+
+Pawn::Pawn(int file, int rank, bool colored, bool facing) : Material(file, rank, colored), facing_{facing} {}
+
+bool Pawn::isColored() {
+    return colored_;
+}
+
+bool Pawn::isEnemy(Material *target)
+{
+    if (target->isColored() == colored_)
+        return false;
+    return true;
+}
