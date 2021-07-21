@@ -1,5 +1,6 @@
 #include <chessboard.hpp>
 #include <iostream>
+#include <fstream>
 
 Chessboard::Chessboard()
 {
@@ -13,6 +14,12 @@ void Chessboard::transformSquare(int file, int rank, std::function<void(Square *
 {
     transform(&squares[file][rank]);
 }
+
+void Chessboard::setEnPassant(int file, int rank)
+{
+    squares[file][rank].setEnPassant();
+}
+
 void Chessboard::setSquare(int file, int rank, Material *chessman)
 {
     if (chessman)
@@ -84,4 +91,29 @@ void Chessboard::convertPosition(int &rank, int &file)
 {
     file -= 49;
     rank -= 97;
+}
+
+void Chessboard::generateHTML()
+{
+    // std::string line;
+    std::ofstream out_file;
+    out_file.open("../output.html", std::ios_base::app);
+
+
+
+    out_file << "<body>" << std::endl;
+    out_file << "<TABLE class=\"chessboard\" style=\"width:800px;height:800px;\" border=5 cellspacing=0>" << std::endl;
+    for(int i = 7; i >= 0; --i)
+    {
+        out_file << "<TR>" << std::endl;
+        for(int j = 0; j < RANKS; ++j)
+        {
+            out_file << squares[i][j].getHTML() << std::endl;
+        }
+        out_file << "</TR>" << std::endl;
+    }
+    out_file << "</TABLE>" << std::endl;
+    out_file << "</body>" << std::endl;
+    out_file << "</html>" << std::endl;
+    out_file.close();
 }

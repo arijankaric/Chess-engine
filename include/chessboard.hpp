@@ -27,6 +27,8 @@ public:
     // We need to account for En passant target square
     bool attackSquare(int file, int rank, Material* attacker);
     static void convertPosition(int&, int&);
+    void setEnPassant(int, int);
+    void generateHTML();
 
 
 private:

@@ -152,6 +152,7 @@
             border: 25px solid gray;
             margin: auto;
         }
+
         .circle {
             width: 50px;
             height: 50px;
@@ -160,35 +161,34 @@
             border: 5px solid rgba(128, 128, 128, 0.4);
             margin: auto;
             display: grid;
+            grid-area: 1 / 1;
             /* z-index: -1; */
         }
-         .back{
+
+        .back {
             margin: auto;
-            grid-area: 1 / 1;
-            opacity: 1.0;
-            z-index: 100; 
-        } 
-        p{
-            opacity: 1;
+            /* grid-area: 1 / 1; */
+            /* opacity: 1.0; */
+            /* z-index: 100;  */
         }
     </style>
 </head>
 
 <body>
-
     <TABLE class="chessboard" style="width:800px;height:800px;" border=5 cellspacing=0>
         <TR>
             <TD class="white">&#9814;</TD>
             <TD class="black">&#9816;</TD>
             <TD class="white">
-                <div class="circle"><div class="back">&#9815;</div></div>
+                <div class="circle">
+                    <div class="back">&#9815;</div>
+                </div>
             </TD>
             <TD class="black">&#9812;</TD>
             <TD class="white">&#9813;</TD>
             <TD class="black">&#9815;</TD>
             <TD class="white">&#9816;</TD>
             <TD class="black">&#9814;</TD>
-
         </TR>
         <TR>
             <TD class="black">&#9817;</TD>
@@ -199,10 +199,11 @@
             <TD class="white">&#9817;</TD>
             <TD class="black">&#9817;</TD>
             <TD class="white">&#9817;</TD>
-
         </TR>
         <TR>
-            <TD class="white"><div class="circleempty"></div></TD>
+            <TD class="white">
+                <div class="circleempty"></div>
+            </TD>
             <TD class="black"></TD>
             <TD class="white"></TD>
             <TD class="black"></TD>
@@ -210,29 +211,6 @@
             <TD class="black"></TD>
             <TD class="white"></TD>
             <TD class="black"></TD>
-
-        </TR>
-        <TR>
-            <TD class="black"></TD>
-            <TD class="white"></TD>
-            <TD class="black"></TD>
-            <TD class="white"></TD>
-            <TD class="black"></TD>
-            <TD class="white"></TD>
-            <TD class="black"></TD>
-            <TD class="white"></TD>
-
-        </TR>
-        <TR>
-            <TD class="white"></TD>
-            <TD class="black"></TD>
-            <TD class="white"></TD>
-            <TD class="black"></TD>
-            <TD class="white"></TD>
-            <TD class="black"></TD>
-            <TD class="white"></TD>
-            <TD class="black"></TD>
-
         </TR>
         <TR>
             <TD class="black"></TD>
@@ -243,7 +221,27 @@
             <TD class="white"></TD>
             <TD class="black"></TD>
             <TD class="white"></TD>
+        </TR>
+        <TR>
+            <TD class="white"></TD>
+            <TD class="black"></TD>
+            <TD class="white"></TD>
+            <TD class="black"></TD>
+            <TD class="white"></TD>
+            <TD class="black"></TD>
+            <TD class="white"></TD>
+            <TD class="black"></TD>
 
+        </TR>
+        <TR>
+            <TD class="black"></TD>
+            <TD class="white"></TD>
+            <TD class="black"></TD>
+            <TD class="white"></TD>
+            <TD class="black"></TD>
+            <TD class="white"></TD>
+            <TD class="black"></TD>
+            <TD class="white"></TD>
         </TR>
         <TR>
             <TD class="white">&#9823;</TD>
@@ -265,9 +263,7 @@
             <TD class="white">&#9821;</TD>
             <TD class="black">&#9822;</TD>
             <TD class="white">&#9820;</TD>
-
         </TR>
-
     </TABLE>
 
     <!-- <div>

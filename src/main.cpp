@@ -8,10 +8,12 @@
 
 int main(void)
 {
+    Game m;
+    // m.generateHTMLDOC();
     std::string input;
     std::cout << "Input Forsyth-Edwards chess notation: ";
     std::getline(std::cin, input);
-    Game m;
     m.parseFEN(input);
     m.selectPosition();
+    m.generateHTMLDOC();
 }

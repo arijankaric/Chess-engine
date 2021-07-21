@@ -1,4 +1,5 @@
 #include <game.hpp>
+#include <fstream>
 
 Game::Game() {}
 Game::~Game()
@@ -23,6 +24,35 @@ Game::~Game()
 //         //whitePieces[i] = new Pawn();
 //     }
 // }
+
+void Game::generateHTMLDOC()
+{
+
+    std::string line;
+    std::ifstream ini_file {"../head.html"};
+    std::ofstream out_file {"../output.html"};
+
+    if(ini_file && out_file){
+        while(getline(ini_file, line))
+        {
+            out_file << line << "\n";
+        }
+    }
+    else {
+        printf("something went wrong inside Game::generateHTMLDOC");
+    }
+
+    ini_file.close();
+    out_file.close();
+
+    mainBoard.generateHTML();
+
+    // out_file.open("../output.html", std::ios_base::app);
+    // out_file << "appendovanje";
+    out_file.close();
+
+}
+
 
 void Game::selectPosition()
 {
@@ -66,11 +96,12 @@ void Game::parseFEN(std::string &input)
     {
     auto enPassant = second->str();
     std::cout << enPassant << std::endl;
-    int file = enPassant[0];
-    int rank = enPassant[1];
-    std::cout << "enPassant file: " << file << " rank: " << rank;
+    int rank = enPassant[0];
+    int file = enPassant[1];
+    // std::cout << "enPassant file: " << file << " rank: " << rank;
     Chessboard::convertPosition(rank, file);
-    std::cout << "After conversion enPassant file: " << file << " rank: " << rank << std::endl;
+    // std::cout << "After conversion enPassant file: " << file << " rank: " << rank << std::endl;
+    mainBoard.setEnPassant(file, rank);
     }
 }
 

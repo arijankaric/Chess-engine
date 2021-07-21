@@ -38,6 +38,7 @@ public:
     void selectPosition();
 
     void parseFEN(std::string &input);
+    void generateHTMLDOC();
 
 private:
     Chessboard mainBoard;

@@ -1,2 +1,6 @@
 /builddir
 .vscode
+# index.html
+output.html
+include/chessboardhtml.hpp
+src/chessboardhtml.cpp

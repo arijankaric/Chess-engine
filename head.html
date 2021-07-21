@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Board</title>
+    <style>
+        .chessboard TD {
+            width: 85px;
+            height: 85px;
+            padding: 5px;
+            text-align: center;
+            font-size: 30px;
+        }
+        .black {
+            background-color: #769657;
+        }
+
+        .white {
+            background-color: #eeeed2;
+        }
+        .circleempty {
+            width: 0px;
+            height: 0px;
+            background-color: transparent;
+            opacity: 0.4;
+            border-radius: 25px;
+            border: 25px solid gray;
+            margin: auto;
+        }
+        .circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50px;
+            border: 5px solid rgba(128, 128, 128, 0.4);
+            margin: auto;
+            display: grid;
+            grid-area: 1 / 1;
+        }
+         .back{
+            margin: auto;
+        }
+    </style>
+</head>
