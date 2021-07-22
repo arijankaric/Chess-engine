@@ -93,11 +93,11 @@ void Chessboard::convertPosition(int &rank, int &file)
     rank -= 97;
 }
 
-void Chessboard::generateHTML()
+void Chessboard::generateHTML(std::string outputPath)
 {
     // std::string line;
     std::ofstream out_file;
-    out_file.open("../output.html", std::ios_base::app);
+    out_file.open(outputPath, std::ios_base::app);
 
 
 

@@ -28,7 +28,7 @@ public:
     bool attackSquare(int file, int rank, Material* attacker);
     static void convertPosition(int&, int&);
     void setEnPassant(int, int);
-    void generateHTML();
+    void generateHTML(std::string);
 
 
 private:

@@ -1,7 +1,6 @@
 project('zadaca2', 'cpp', default_options : ['cpp_std=c++14', 'buildtype=release'])
-#default_options only used when running meson for the 1st time
-#default_option : ['cpp_std=c++14', 'buildtype=release']
-inc = include_directories('include')
+
+inc = include_directories('include', 'resources')
 
 
 project_source_files = [

@@ -1,6 +1,10 @@
 #include <game.hpp>
 #include <fstream>
 
+#include <boost/spirit/home/x3.hpp>
+
+namespace x3 = boost::spirit::x3;
+
 Game::Game() {}
 Game::~Game()
 {
@@ -28,31 +32,46 @@ Game::~Game()
 void Game::generateHTMLDOC()
 {
 
-    std::string line;
-    std::ifstream ini_file {"../head.html"};
-    std::ofstream out_file {"../output.html"};
+    const char *s =
+#include <head.html>
+        ;
+    std::ofstream out{"../output/output1.html"};
 
-    if(ini_file && out_file){
-        while(getline(ini_file, line))
-        {
-            out_file << line << "\n";
-        }
-    }
-    else {
-        printf("something went wrong inside Game::generateHTMLDOC");
-    }
+    out << s;
+    out.close();
+    mainBoard.generateHTML("../output/output1.html");
 
-    ini_file.close();
-    out_file.close();
+    // std::string line;
+    // std::ifstream ini_file {"../resources/head.html"};
+    // std::ofstream out_file {"../output/output.html"};
 
-    mainBoard.generateHTML();
+    // if(ini_file && out_file){
+    //     while(getline(ini_file, line))
+    //     {
+    //         out_file << line << "\n";
+    //     }
+    // }
+    // else {
+    //     printf("something went wrong inside Game::generateHTMLDOC");
+    // }
+
+    // ini_file.close();
+    // out_file.close();
+
+    // mainBoard.generateHTML("../output/output.html");
 
     // out_file.open("../output.html", std::ios_base::app);
     // out_file << "appendovanje";
-    out_file.close();
+    // out_file.close();
 
+    std::cout << "Wanna open the file[Y/n]" << std::endl;
+    char choice;
+    std::cin >> choice;
+    if (toupper(choice) == 'Y')
+        system("xdg-open ../output/output1.html");
+    else
+        std::cout << "#cry" << std::endl;
 }
-
 
 void Game::selectPosition()
 {
@@ -61,7 +80,7 @@ void Game::selectPosition()
     std::cout << "Inside selectPosition file: " << file << " rank: " << rank << std::endl;
     while (!mainBoard.validAttacker(file, rank))
     {
-        
+
         std::cout << "Select position of attacking material\nEnter Rank/Column(a-h):";
         std::cin >> c;
         rank = c;
@@ -70,7 +89,6 @@ void Game::selectPosition()
         --file;
         rank -= 97;
     }
-
 
     std::cout << "file: " << file << " rank: " << rank << std::endl;
     projectAttack(file, rank);
@@ -92,17 +110,19 @@ void Game::parseFEN(std::string &input)
     std::regex t("[a-h][1-8]");
     std::cout << "input enPassant: " << input << std::endl;
     std::sregex_iterator second(input.begin(), input.end(), t);
-    if(!second->empty())
+    if (!second->empty())
     {
-    auto enPassant = second->str();
-    std::cout << enPassant << std::endl;
-    int rank = enPassant[0];
-    int file = enPassant[1];
-    // std::cout << "enPassant file: " << file << " rank: " << rank;
-    Chessboard::convertPosition(rank, file);
-    // std::cout << "After conversion enPassant file: " << file << " rank: " << rank << std::endl;
-    mainBoard.setEnPassant(file, rank);
+        auto enPassant = second->str();
+        std::cout << enPassant << std::endl;
+        int rank = enPassant[0];
+        int file = enPassant[1];
+        // std::cout << "enPassant file: " << file << " rank: " << rank;
+        Chessboard::convertPosition(rank, file);
+        // std::cout << "After conversion enPassant file: " << file << " rank: " << rank << std::endl;
+        mainBoard.setEnPassant(file, rank);
     }
+
+    // bool r = x3::phrase_parse(input.begin(), input.end(), );
 }
 
 void Game::setEmpty(int file, int rank)
@@ -232,68 +252,66 @@ void Game::projectAttack(int file, int rank)
 {
     // mainBoard.getSquare(file, rank).getMaterial()->projectAttack(mainBoard);
 
-
-
     char typeOfAttackingMaterial = mainBoard.getSquare(file, rank).getMaterial()->getTypeOfMaterial();
 
-    switch(typeOfAttackingMaterial) 
+    switch (typeOfAttackingMaterial)
     {
-        case 'K':
+    case 'K':
         std::cout << "White King is attacking\n";
         allAround(file, rank);
         break;
-        case 'Q':
+    case 'Q':
         std::cout << "White Queen is attacking\n";
         queenAttack(file, rank);
         break;
-        case 'B':
+    case 'B':
         std::cout << "White Bishop is attacking\n";
         bishopAttack(file, rank);
         break;
-        case 'N':
+    case 'N':
         std::cout << "White Knight is attacking\n";
         jumpingAttack(file, rank);
         break;
-        case 'P':
+    case 'P':
         std::cout << "White Pawn is attacking\n";
         backward(file, rank);
         break;
-        case 'R':
+    case 'R':
         std::cout << "White Rook is attacking\n";
         rookAttack(file, rank);
         break;
-        case 'k':
+    case 'k':
         std::cout << "Black King is attacking\n";
         allAround(file, rank);
         break;
-        case 'q':
+    case 'q':
         std::cout << "Black Queen is attacking\n";
         queenAttack(file, rank);
         break;
-        case 'b':
+    case 'b':
         std::cout << "Black Bishop is attacking\n";
         bishopAttack(file, rank);
         break;
-        case 'n':
+    case 'n':
         std::cout << "Black Knight is attacking\n";
         jumpingAttack(file, rank);
         break;
-        case 'p':
+    case 'p':
         std::cout << "Black Pawn is attacking\n";
         forward(file, rank);
         break;
-        case 'r':
+    case 'r':
         std::cout << "Black Rook is attacking\n";
         rookAttack(file, rank);
         break;
-        default:
+    default:
         std::cout << "Error in Game::projectAttack, switch statement\n";
     }
 }
 
 void Game::verticalUp(int file, int rank)
 {
-    Material* attacker = mainBoard.getSquare(file, rank).getMaterial();
+    Material *attacker = mainBoard.getSquare(file, rank).getMaterial();
     while (mainBoard.attackSquare(++file, rank, attacker))
     {
     }
@@ -301,7 +319,7 @@ void Game::verticalUp(int file, int rank)
 
 void Game::verticalDown(int file, int rank)
 {
-    Material* attacker = mainBoard.getSquare(file, rank).getMaterial();
+    Material *attacker = mainBoard.getSquare(file, rank).getMaterial();
     while (mainBoard.attackSquare(--file, rank, attacker))
     {
     }
@@ -309,14 +327,14 @@ void Game::verticalDown(int file, int rank)
 
 void Game::horizontalLeft(int file, int rank)
 {
-    Material* attacker = mainBoard.getSquare(file, rank).getMaterial();
+    Material *attacker = mainBoard.getSquare(file, rank).getMaterial();
     while (mainBoard.attackSquare(file, --rank, attacker))
     {
     }
 }
 void Game::horizontalRight(int file, int rank)
 {
-    Material* attacker = mainBoard.getSquare(file, rank).getMaterial();
+    Material *attacker = mainBoard.getSquare(file, rank).getMaterial();
     while (mainBoard.attackSquare(file, ++rank, attacker))
     {
     }
@@ -325,7 +343,7 @@ void Game::horizontalRight(int file, int rank)
 // Horse attack
 void Game::jumpingAttack(int file, int rank)
 {
-    Material* attacker = mainBoard.getSquare(file, rank).getMaterial();
+    Material *attacker = mainBoard.getSquare(file, rank).getMaterial();
     mainBoard.attackSquare(file + 2, rank + 1, attacker);
     mainBoard.attackSquare(file + 1, rank + 2, attacker);
     mainBoard.attackSquare(file + 2, rank - 1, attacker);
@@ -338,7 +356,7 @@ void Game::jumpingAttack(int file, int rank)
 
 void Game::diagonallyNorthWest(int file, int rank)
 {
-    Material* attacker = mainBoard.getSquare(file, rank).getMaterial();
+    Material *attacker = mainBoard.getSquare(file, rank).getMaterial();
     while (mainBoard.attackSquare(++file, ++rank, attacker))
     {
     }
@@ -346,7 +364,7 @@ void Game::diagonallyNorthWest(int file, int rank)
 
 void Game::diagonallyNorthEast(int file, int rank)
 {
-    Material* attacker = mainBoard.getSquare(file, rank).getMaterial();
+    Material *attacker = mainBoard.getSquare(file, rank).getMaterial();
     while (mainBoard.attackSquare(++file, --rank, attacker))
     {
     }
@@ -354,7 +372,7 @@ void Game::diagonallyNorthEast(int file, int rank)
 
 void Game::diagonallySouthEast(int file, int rank)
 {
-    Material* attacker = mainBoard.getSquare(file, rank).getMaterial();
+    Material *attacker = mainBoard.getSquare(file, rank).getMaterial();
     // While loops, blocking functions are really really bad practice
     // So need a solution for that
     while (mainBoard.attackSquare(--file, --rank, attacker))
@@ -363,7 +381,7 @@ void Game::diagonallySouthEast(int file, int rank)
 }
 void Game::diagonallySouthWest(int file, int rank)
 {
-    Material* attacker = mainBoard.getSquare(file, rank).getMaterial();
+    Material *attacker = mainBoard.getSquare(file, rank).getMaterial();
     while (mainBoard.attackSquare(--file, ++rank, attacker))
     {
     }
@@ -372,7 +390,7 @@ void Game::diagonallySouthWest(int file, int rank)
 // King attack
 void Game::allAround(int file, int rank)
 {
-    Material* attacker = mainBoard.getSquare(file, rank).getMaterial();
+    Material *attacker = mainBoard.getSquare(file, rank).getMaterial();
     mainBoard.attackSquare(file + 1, rank + 1, attacker);
     mainBoard.attackSquare(file + 1, rank, attacker);
     mainBoard.attackSquare(file + 1, rank - 1, attacker);
@@ -386,7 +404,7 @@ void Game::allAround(int file, int rank)
 // White pawns
 void Game::forward(int file, int rank)
 {
-    Material* attacker = mainBoard.getSquare(file, rank).getMaterial();
+    Material *attacker = mainBoard.getSquare(file, rank).getMaterial();
     mainBoard.attackSquare(file + 1, rank + 1, attacker);
     mainBoard.attackSquare(file + 1, rank - 1, attacker);
 }
@@ -394,7 +412,7 @@ void Game::forward(int file, int rank)
 // Black pawns
 void Game::backward(int file, int rank)
 {
-    Material* attacker = mainBoard.getSquare(file, rank).getMaterial();
+    Material *attacker = mainBoard.getSquare(file, rank).getMaterial();
     mainBoard.attackSquare(file - 1, rank + 1, attacker);
     mainBoard.attackSquare(file - 1, rank - 1, attacker);
 }

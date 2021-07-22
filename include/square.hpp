@@ -13,11 +13,6 @@ public:
     void setMaterial(Material *chessman);
     void init(int f, int r, bool colored);
     std::string getHTML();
-    // <TD class="white"><div class="circleempty"></div></TD>
-
-    // <TD class="white">
-    //     <div class="circle"><div class="back">&#9815;</div></div>
-    // </TD>
     bool attackSquare(Material* attacker);
     void setEnPassant();
     Material* getMaterial();

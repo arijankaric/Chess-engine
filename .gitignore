@@ -4,3 +4,4 @@
 output.html
 include/chessboardhtml.hpp
 src/chessboardhtml.cpp
+output/*.html
