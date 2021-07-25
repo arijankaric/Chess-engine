@@ -1,6 +1,7 @@
 #include <game.hpp>
 #include <fstream>
 #include <bitset>
+#include <chrono>
 
 #include <boost/spirit/home/x3.hpp>
 
@@ -97,7 +98,11 @@ void Game::selectPosition()
     }
 
     // std::cout << "file: " << file << " rank: " << rank << std::endl;
+    auto start = std::chrono::high_resolution_clock::now();
     projectAttack(file, rank);
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    std::cout << "Time taken by function projectAttack: " << duration.count() << " microseconds" << std::endl;
 }
 
 void Game::parseFEN(std::string &input)
@@ -447,7 +452,7 @@ void Game::allAround(int file, int rank)
     attackSquare(file - 1, rank + 1, attacker);
     bool kingCastle = attackSquare(file, rank + 1, attacker);
 
-    if(isVulnerable(attacker->isColored()))
+    if (isVulnerable(attacker->isColored()))
         return;
 
     if (attacker->isColored())
@@ -486,9 +491,9 @@ void Game::forward(int file, int rank)
 void Game::backward(int file, int rank)
 {
     Material *attacker = mainBoard.getSquare(file, rank).getMaterial();
-    if (!mainBoard.isEmpty(file - 1, rank + 1))
+    if (!mainBoard.isEmpty(file - 1, rank + 1) || mainBoard.isEnPassant(file -1, rank +1))
         attackSquare(file - 1, rank + 1, attacker);
-    if (!mainBoard.isEmpty(file - 1, rank - 1))
+    if (!mainBoard.isEmpty(file - 1, rank - 1) || mainBoard.isEnPassant(file-1, rank -1))
         attackSquare(file - 1, rank - 1, attacker);
     if (mainBoard.isEmpty(file - 1, rank))
     {
@@ -644,7 +649,7 @@ bool Game::attackSquare(int file, int rank, Material *attacker)
     int savedFile = attacker->file_;
     int savedRank = attacker->rank_;
     projectBoard = mainBoard;
-    if (mainBoard.isEmpty(file, rank) || mainBoard.getSquare(file, rank).getMaterial()->isEnemy(attacker))
+    if (mainBoard.isEmpty(file, rank) || mainBoard.getSquare(file, rank).getMaterial()->isEnemy(attacker) || mainBoard.isEnPassant(file, rank))
         projectBoard.moveMaterial(file, rank, attacker);
     if (!isVulnerable(attacker->isColored()))
         mainBoard.attackSquare(file, rank, attacker);

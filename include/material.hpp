@@ -3,7 +3,9 @@
 // These pieces are sometimes called chessmen, but most experienced players refer to their pieces as “material".
 
 #include <string>
+#include <bitset>
 
+// using typeOfMaterial = std::bitset<12>;
 
 #define whiteQueen 1<<1
 #define whiteKing 1<<2
@@ -54,10 +56,10 @@ class Material {
     // virtual binded at run-time
     // non-virtual binded at compile-time
     // virtual void projectAttack(Chessboard&) = 0;
-    virtual std::string getHTML() = 0;
-    virtual int getint() = 0;
-    virtual bool isColored() = 0;
-    virtual bool isEnemy(Material* target) = 0;
+    virtual std::string getHTML() const = 0;
+    virtual int getint() const = 0;
+    virtual bool isColored() const = 0;
+    virtual bool isEnemy(Material* target) const = 0;
     int file_;
     int rank_;
     protected:

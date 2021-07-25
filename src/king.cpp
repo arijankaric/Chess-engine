@@ -9,24 +9,24 @@ King::King(int file, int rank, bool colored) : Material(file, rank, colored) {}
 //     allAround(file_, rank_, mainBoard);
 // }
 
-std::string King::getHTML()
+std::string King::getHTML() const
 {
     return colored_ ? "&#9812;" : "&#9818;";
 }
 
-bool King::isColored()
+bool King::isColored() const
 {
     return colored_;
 }
 
-bool King::isEnemy(Material *target)
+bool King::isEnemy(Material *target) const
 {
     if (target->isColored() == colored_)
         return false;
     return true;
 }
 
-int King::getint()
+int King::getint() const
 {
     return colored_ ? whiteKing : blackKing;
 }

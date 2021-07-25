@@ -22,20 +22,20 @@ Rook::Rook(int file, int rank, bool colored) : Material(file, rank, colored) {}
 //     };
 // }
 
-std::string Rook::getHTML()
+std::string Rook::getHTML() const
 {
     return colored_ ? "&#9814;" : "&#9820;";
 }
 
-int Rook::getint(){
+int Rook::getint() const{
     return colored_ ? whiteRook : blackRook;
 }
 
-bool Rook::isColored() {
+bool Rook::isColored() const{
     return colored_;
 }
 
-bool Rook::isEnemy(Material *target)
+bool Rook::isEnemy(Material *target) const
 {
     if (target->isColored() == colored_)
         return false;

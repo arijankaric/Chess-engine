@@ -5,3 +5,5 @@ output.html
 include/chessboardhtml.hpp
 src/chessboardhtml.cpp
 output/*.html
+/src/attack.cpp
+/include/attack.hpp

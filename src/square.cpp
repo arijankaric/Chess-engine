@@ -88,7 +88,7 @@ void Square::init(int f, int r, bool colored)
     colored_ = colored;
 }
 
-std::string Square::getHTML()
+std::string Square::getHTML() const
 {
     std::string color = colored_ ? "white" : "black";
     std::string chessman = chessman_ ? chessman_->getHTML() : "";
@@ -141,7 +141,7 @@ void Square::setEnPassant()
     enPassant_ = true;
 }
 
-Material* Square::getMaterial()
+Material* Square::getMaterial() const
 {
     // std::cout << "Inside getMaterial" << std::endl;
     // std::cout << "file: " << file_ << "rank: " << rank_ << std::endl;
@@ -149,9 +149,14 @@ Material* Square::getMaterial()
 }
 
 // Worst function name ever
-bool Square::isThereMaterial()
+bool Square::isThereMaterial() const
 {
     return chessman_ ? true : false;
+}
+
+bool Square::isEnPassant() const
+{
+    return enPassant_ ? true : false;
 }
 
 // void Square::pickUp()

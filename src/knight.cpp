@@ -7,20 +7,22 @@ Knight::Knight(int file, int rank, bool colored) : Material(file, rank, colored)
 //     jumpingAttack(file_, rank_, mainBoard);
 // }
 
-std::string Knight::getHTML()
+std::string Knight::getHTML() const
 {
     return colored_ ? "&#9816;" : "&#9822;";
 }
 
-int Knight::getint(){
+int Knight::getint() const
+{
     return colored_ ? whiteKnight : blackKnight;
 }
 
-bool Knight::isColored() {
+bool Knight::isColored() const
+{
     return colored_;
 }
 
-bool Knight::isEnemy(Material *target)
+bool Knight::isEnemy(Material *target) const
 {
     if (target->isColored() == colored_)
         return false;

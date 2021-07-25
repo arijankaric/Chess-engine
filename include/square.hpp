@@ -12,11 +12,12 @@ public:
     ~Square();
     void setMaterial(Material *chessman);
     void init(int f, int r, bool colored);
-    std::string getHTML();
+    std::string getHTML() const;
     bool attackSquare(Material* attacker);
     void setEnPassant();
-    Material* getMaterial();
-    bool isThereMaterial();
+    Material* getMaterial() const;
+    bool isThereMaterial() const;
+    bool isEnPassant() const;
     // void pickUp();
     // Square& operator=(const Square&);
     // Material* createMaterial(int);

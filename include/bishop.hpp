@@ -7,9 +7,9 @@ class Bishop : public Material {
     Bishop(int file, int rank, bool colored);
     ~Bishop();
     // void projectAttack(Chessboard& mainBoard);
-    std::string getHTML();
-    int getint();
-    bool isEnemy(Material* target);
-    bool isColored();
+    std::string getHTML() const;
+    int getint() const;
+    bool isEnemy(Material* target) const;
+    bool isColored() const;
     private:
 };

@@ -92,7 +92,7 @@ void Chessboard::init()
 }
 
 // Returns false if out of range, true if in range, kinda not intuitive, should change that
-bool Chessboard::checkForRange(int file, int rank)
+bool Chessboard::checkForRange(int file, int rank) const
 {
     // std::cout << "Inside checkForRange\n";
     return (file < 0 || file >= FILES || rank < 0 || rank >= RANKS) ? false : true;
@@ -104,9 +104,8 @@ void Chessboard::convertPosition(int &rank, int &file)
     rank -= 97;
 }
 
-void Chessboard::generateHTML(std::string outputPath)
+void Chessboard::generateHTML(const std::string outputPath)
 {
-    // std::string line;
     std::ofstream out_file;
     out_file.open(outputPath, std::ios_base::app);
 
@@ -127,7 +126,7 @@ void Chessboard::generateHTML(std::string outputPath)
     out_file.close();
 }
 
-bool Chessboard::isValidEnemy(int file, int rank, int typeOfMat)
+bool Chessboard::isValidEnemy(int file, int rank, int typeOfMat) const
 {
     if (!checkForRange(file, rank) || !squares[file][rank].isThereMaterial())
         return false;
@@ -141,7 +140,7 @@ bool Chessboard::isValidEnemy(int file, int rank, int typeOfMat)
     return false;
 }
 
-bool Chessboard::isEmpty(int file, int rank)
+bool Chessboard::isEmpty(int file, int rank) const
 {
     return !squares[file][rank].isThereMaterial();
 }
@@ -153,4 +152,9 @@ void Chessboard::moveMaterial(int file, int rank, Material *mat)
     mat->file_ = file;
     mat->rank_ = rank;
     squares[file][rank].setMaterial(mat);
+}
+
+bool Chessboard::isEnPassant(int file, int rank) const
+{
+    return squares[file][rank].isEnPassant();
 }

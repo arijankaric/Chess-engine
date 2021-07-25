@@ -15,9 +15,9 @@ public:
     // Fix this somehow
     // std::function<void(Chessboard *)> projectAttackFunction();
 
-    std::string getHTML();
-    int getint();
-    bool isEnemy(Material* target);
-    bool isColored();
+    std::string getHTML() const;
+    int getint() const;
+    bool isEnemy(Material* target) const;
+    bool isColored() const;
     private:
 };

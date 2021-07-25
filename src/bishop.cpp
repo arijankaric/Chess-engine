@@ -6,21 +6,22 @@ Bishop::~Bishop() {}
 // {
 //     bishopAttack(file_, rank_, mainBoard);
 // }
-std::string Bishop::getHTML()
+std::string Bishop::getHTML() const
 {
     return colored_ ? "&#9815;" : "&#9821;";
 }
 
-int Bishop::getint()
+int Bishop::getint() const
 {
     return colored_ ? whiteBishop : blackBishop;
 }
 
-bool Bishop::isColored() {
+bool Bishop::isColored() const
+{
     return colored_;
 }
 
-bool Bishop::isEnemy(Material *target)
+bool Bishop::isEnemy(Material *target) const
 {
     if (target->isColored() == colored_)
         return false;

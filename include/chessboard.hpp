@@ -28,12 +28,13 @@ public:
     bool attackSquare(int file, int rank, Material* attacker);
     static void convertPosition(int&, int&);
     void setEnPassant(int, int);
-    void generateHTML(std::string);
-    bool isValidEnemy(int file, int rank, int typeOfMat);
-    bool isEmpty(int file, int rank);
+    void generateHTML(const std::string);
+    bool isValidEnemy(int file, int rank, int typeOfMat) const;
+    bool isEmpty(int file, int rank) const;
     bool projectMove(int file, int rank);
     void moveMaterial(int file, int rank, Material* mat);
-    bool checkForRange(int file, int rank);
+    bool checkForRange(int file, int rank) const;
+    bool isEnPassant(int, int) const;
 
 
 
