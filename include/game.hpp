@@ -15,10 +15,10 @@
 #include <regex>
 #include <vector>
 
-#define blackqueencastle 0b0000'0001;    
-#define blackkingcastle  0b0000'0010;
-#define whitequeencastle 0b0000'0100;
-#define whitekingcastle  0b0000'1000;
+#define blackqueencastle 0b0000'0001
+#define blackkingcastle  0b0000'0010
+#define whitequeencastle 0b0000'0100
+#define whitekingcastle  1<<4
 
 
 class Game
@@ -55,7 +55,7 @@ private:
     // Material *whiteMaterial[16];
 
     bool whosMove; // 0 - black, 1 - white
-    unsigned char castle = 0b0000'0000;
+    int castle = 0b0000'0000;
 
 
     void setEmpty(int file, int rank);

@@ -20,7 +20,7 @@ public:
     void transformSquare(int file, int rank, std::function<void(Square *)> transform);
     void setSquare(int file, int rank, Material *chessman);
 
-    bool validAttacker(int file, int rank);
+    bool validAttacker(int file, int rank, bool color);
     Square& getSquare(int file, int rank);
 
     void attackingSquare(int file, int rank);

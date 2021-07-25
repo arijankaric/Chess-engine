@@ -9,7 +9,7 @@ namespace x3 = boost::spirit::x3;
 Game::Game() {}
 Game::~Game()
 {
-    for(const auto& v : garbageCollector)
+    for (const auto &v : garbageCollector)
     {
         delete v;
     }
@@ -83,9 +83,10 @@ void Game::selectPosition()
     int file = 8, rank = 8;
     char c;
     // std::cout << "Inside selectPosition file: " << file << " rank: " << rank << std::endl;
-    while (!mainBoard.validAttacker(file, rank))
+    while (!mainBoard.validAttacker(file, rank, whosMove))
     {
 
+        // std::cout << whosMove << std::endl;
         std::cout << "Select position of attacking material\nEnter Rank/Column(a-h):";
         std::cin >> c;
         rank = c;
@@ -95,7 +96,7 @@ void Game::selectPosition()
         rank -= 97;
     }
 
-    std::cout << "file: " << file << " rank: " << rank << std::endl;
+    // std::cout << "file: " << file << " rank: " << rank << std::endl;
     projectAttack(file, rank);
 }
 
@@ -114,7 +115,7 @@ void Game::parseFEN(std::string &input)
     }
 
     std::regex t("[a-h][1-8]");
-    std::cout << "input enPassant: " << input << std::endl;
+    // std::cout << "input enPassant: " << input << std::endl;
     std::sregex_iterator second(input.begin(), input.end(), t);
     if (!second->empty())
     {
@@ -130,7 +131,11 @@ void Game::parseFEN(std::string &input)
     std::regex whosTurn("w|b");
     std::sregex_iterator third(input.begin(), input.end(), whosTurn);
     char whosMove = third->str()[0];
-    std::cout << whosMove << std::endl;
+    // std::cout << whosMove << std::endl;
+    if (whosMove == 'w')
+        Game::whosMove = true;
+    else
+        Game::whosMove = false;
 
     std::regex castleRgx(" K?Q?k?q? ");
     std::sregex_iterator fourth(input.begin(), input.end(), castleRgx);
@@ -197,7 +202,7 @@ void Game::parseFILE(std::string &input, int file)
         }
         else if (isalpha(input[i]))
         {
-            Material* newMat = makeMaterial(file, rank, &input.at(i));
+            Material *newMat = makeMaterial(file, rank, &input.at(i));
             garbageCollector.push_back(newMat);
             mainBoard.setSquare(file, rank, newMat);
 
@@ -216,7 +221,7 @@ void Game::parseFILE(std::string &input, int file)
         // Seems kinda immature to pass object of class Game
         // by reference don't you think.
     }
-    std::cout << "Input: " << input << std::endl;
+    // std::cout << "Input: " << input << std::endl;
 }
 
 // Prolly won't need this since material is handled by the squares destructor
@@ -230,7 +235,7 @@ void Game::deleteMaterial(Material **parMaterial)
 
 Material *Game::makeMaterial(int file, int rank, char *materialCode)
 {
-    std::cout << "Inside function makeMaterial: " << materialCode[0] << std::endl;
+    // std::cout << "Inside function makeMaterial: " << materialCode[0] << std::endl;
     Material *materialPtr;
     switch (materialCode[0])
     {
@@ -436,11 +441,29 @@ void Game::allAround(int file, int rank)
     attackSquare(file + 1, rank + 1, attacker);
     attackSquare(file + 1, rank, attacker);
     attackSquare(file + 1, rank - 1, attacker);
-    attackSquare(file, rank - 1, attacker);
+    bool queenCastle = attackSquare(file, rank - 1, attacker);
     attackSquare(file - 1, rank - 1, attacker);
     attackSquare(file - 1, rank, attacker);
     attackSquare(file - 1, rank + 1, attacker);
-    attackSquare(file, rank + 1, attacker);
+    bool kingCastle = attackSquare(file, rank + 1, attacker);
+
+    if(isVulnerable(attacker->isColored()))
+        return;
+
+    if (attacker->isColored())
+    {
+        if ((whitekingcastle & castle) && kingCastle)
+            attackSquare(file, rank + 2, attacker);
+        if ((whitequeencastle & castle) && queenCastle)
+            attackSquare(file, rank - 2, attacker);
+    }
+    else
+    {
+        if ((blackkingcastle & castle) && kingCastle)
+            attackSquare(file, rank + 2, attacker);
+        if ((blackqueencastle & castle) && queenCastle)
+            attackSquare(file, rank - 2, attacker);
+    }
 }
 
 // White pawns
@@ -470,8 +493,8 @@ void Game::backward(int file, int rank)
     if (mainBoard.isEmpty(file - 1, rank))
     {
         attackSquare(file - 1, rank, attacker);
-    if (file == 6 && mainBoard.isEmpty(file - 2, rank))
-        attackSquare(file - 2, rank, attacker);
+        if (file == 6 && mainBoard.isEmpty(file - 2, rank))
+            attackSquare(file - 2, rank, attacker);
     }
 }
 
@@ -533,7 +556,7 @@ bool Game::queenAttackers(int file, int rank, bool colored)
     int queen = colored ? blackQueen : whiteQueen;
     int rook = colored ? blackRook : whiteRook;
     int bishop = colored ? blackBishop : whiteBishop;
-    std::cout << "queenAttackers: " << (queen | rook) << std::endl;
+    // std::cout << "queenAttackers: " << (queen | rook) << std::endl;
 
     return verticalUpAttacker(file, rank, (queen | rook)) ||
            verticalDownAttacker(file, rank, (queen | rook)) ||
@@ -616,8 +639,8 @@ bool Game::diagonallySouthWestAttacker(int file, int rank, int typeOfMat)
 
 bool Game::attackSquare(int file, int rank, Material *attacker)
 {
-    if(!mainBoard.checkForRange(file, rank))
-    return false;
+    if (!mainBoard.checkForRange(file, rank))
+        return false;
     int savedFile = attacker->file_;
     int savedRank = attacker->rank_;
     projectBoard = mainBoard;

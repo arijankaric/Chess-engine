@@ -40,11 +40,18 @@ Square &Chessboard::getSquare(int file, int rank)
     exit(1);
 }
 
-bool Chessboard::validAttacker(int file, int rank)
+bool Chessboard::validAttacker(int file, int rank, bool color)
 {
+    // std::cout << color << std::endl;
     // std::cout << "Inside validAttacker File: " << file << " Rank: " << rank << std::endl;
-    if (checkForRange(file, rank) && squares[file][rank].getMaterial())
+    if (checkForRange(file, rank) && squares[file][rank].isThereMaterial())
     {
+        if(squares[file][rank].getMaterial()->isColored() != color)
+        {
+
+            std::cout << "It's not your move yet\n";
+            return false;
+        }
         // std::cout << "Inside validAttacker True" << std::endl;
 
         return true;
