@@ -13,8 +13,8 @@ std::string Queen::getHTML()
     return colored_ ? "&#9813;" : "&#9819;";
 }
 
-char Queen::getTypeOfMaterial(){
-    return colored_ ? 'Q' : 'q';
+int Queen::getint(){
+    return colored_ ? whiteQueen : blackQueen;
 }
 
 bool Queen::isColored() {

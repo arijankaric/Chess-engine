@@ -29,6 +29,12 @@ public:
     static void convertPosition(int&, int&);
     void setEnPassant(int, int);
     void generateHTML(std::string);
+    bool isValidEnemy(int file, int rank, int typeOfMat);
+    bool isEmpty(int file, int rank);
+    bool projectMove(int file, int rank);
+    void moveMaterial(int file, int rank, Material* mat);
+    bool checkForRange(int file, int rank);
+
 
 
 private:
@@ -39,6 +45,5 @@ private:
     void init();
 
     // Returns false if out of range, true if in range, kinda not intuitive, should change that
-    bool checkForRange(int file, int rank);
 
 };

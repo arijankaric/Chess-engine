@@ -1,4 +1,4 @@
-project('zadaca2', 'cpp', default_options : ['cpp_std=c++14', 'buildtype=release'])
+project('zadaca2', 'cpp', default_options : ['cpp_std=c++14', 'buildtype=debugoptimized'])
 
 inc = include_directories('include', 'resources')
 

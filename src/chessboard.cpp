@@ -4,7 +4,7 @@
 
 Chessboard::Chessboard()
 {
-    std::cout << NUMOFSQUARES << std::endl;
+    // std::cout << NUMOFSQUARES << std::endl;
     init();
 }
 Chessboard::~Chessboard() {}
@@ -22,30 +22,34 @@ void Chessboard::setEnPassant(int file, int rank)
 
 void Chessboard::setSquare(int file, int rank, Material *chessman)
 {
-    if (chessman)
-        std::cout << "Inside setSquare file: " << file << " rank: " << rank << " typeOfMaterial: " << chessman->getTypeOfMaterial() << std::endl;
-    else
-        std::cout << "Inside setSquare file: " << file << " rank: " << rank << " typeOfMaterial: "
-                  << "none" << std::endl;
+    // if (chessman)
+    //     std::cout << "Inside setSquare file: " << file << " rank: " << rank << " int: " << chessman->getint() << std::endl;
+    // else
+    //     std::cout << "Inside setSquare file: " << file << " rank: " << rank << " int: "
+    //               << "none" << std::endl;
 
     squares[file][rank].setMaterial(chessman);
 }
 
 Square &Chessboard::getSquare(int file, int rank)
 {
-        return squares[file][rank];
+    if(checkForRange(file, rank))
+    return squares[file][rank];
+    
+    std::cout << "out of range getSquare\n";
+    exit(1);
 }
 
 bool Chessboard::validAttacker(int file, int rank)
 {
-    std::cout << "Inside validAttacker File: " << file << " Rank: " << rank << std::endl;
+    // std::cout << "Inside validAttacker File: " << file << " Rank: " << rank << std::endl;
     if (checkForRange(file, rank) && squares[file][rank].getMaterial())
     {
-        std::cout << "Inside validAttacker True" << std::endl;
+        // std::cout << "Inside validAttacker True" << std::endl;
 
         return true;
     }
-    std::cout << "Inside validAttacker False" << std::endl;
+    // std::cout << "Inside validAttacker False" << std::endl;
 
     return false;
 }
@@ -60,7 +64,7 @@ bool Chessboard::attackSquare(int file, int rank, Material *attacker)
 {
     if (checkForRange(file, rank))
     {
-        std::cout << "Attacking square file: " << file << " rank: " << rank << std::endl;
+        // std::cout << "Attacking square file: " << file << " rank: " << rank << std::endl;
         return squares[file][rank].attackSquare(attacker);
     }
     return false;
@@ -83,7 +87,7 @@ void Chessboard::init()
 // Returns false if out of range, true if in range, kinda not intuitive, should change that
 bool Chessboard::checkForRange(int file, int rank)
 {
-    std::cout << "Inside checkForRange\n";
+    // std::cout << "Inside checkForRange\n";
     return (file < 0 || file >= FILES || rank < 0 || rank >= RANKS) ? false : true;
 }
 
@@ -99,14 +103,12 @@ void Chessboard::generateHTML(std::string outputPath)
     std::ofstream out_file;
     out_file.open(outputPath, std::ios_base::app);
 
-
-
     out_file << "<body>" << std::endl;
     out_file << "<TABLE class=\"chessboard\" style=\"width:800px;height:800px;\" border=5 cellspacing=0>" << std::endl;
-    for(int i = 7; i >= 0; --i)
+    for (int i = 7; i >= 0; --i)
     {
         out_file << "<TR>" << std::endl;
-        for(int j = 0; j < RANKS; ++j)
+        for (int j = 0; j < RANKS; ++j)
         {
             out_file << squares[i][j].getHTML() << std::endl;
         }
@@ -116,4 +118,32 @@ void Chessboard::generateHTML(std::string outputPath)
     out_file << "</body>" << std::endl;
     out_file << "</html>" << std::endl;
     out_file.close();
+}
+
+bool Chessboard::isValidEnemy(int file, int rank, int typeOfMat)
+{
+    if (!checkForRange(file, rank) || !squares[file][rank].isThereMaterial())
+        return false;
+    Material *mat = squares[file][rank].getMaterial();
+    // if(file == 4 && rank == 2)
+    // std::cout << "mat: " << mat->getint() << "typeOfMat:" << typeOfMat << "&: " << (mat->getint() & typeOfMat) << std::endl;
+    if (mat->getint() & typeOfMat)
+    {
+        return true;
+    }
+    return false;
+}
+
+bool Chessboard::isEmpty(int file, int rank)
+{
+    return !squares[file][rank].isThereMaterial();
+}
+
+void Chessboard::moveMaterial(int file, int rank, Material *mat)
+{
+    // if(file, rank, )
+    squares[mat->file_][mat->rank_].setMaterial(nullptr);
+    mat->file_ = file;
+    mat->rank_ = rank;
+    squares[file][rank].setMaterial(mat);
 }

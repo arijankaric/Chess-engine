@@ -13,6 +13,13 @@
 #include <time.h>
 #include <iostream>
 #include <regex>
+#include <vector>
+
+#define blackqueencastle 0b0000'0001;    
+#define blackkingcastle  0b0000'0010;
+#define whitequeencastle 0b0000'0100;
+#define whitekingcastle  0b0000'1000;
+
 
 class Game
 {
@@ -42,8 +49,14 @@ public:
 
 private:
     Chessboard mainBoard;
+    Chessboard projectBoard;
+    std::vector<Material*> garbageCollector;
     // Material *blackMaterial[16];
     // Material *whiteMaterial[16];
+
+    bool whosMove; // 0 - black, 1 - white
+    unsigned char castle = 0b0000'0000;
+
 
     void setEmpty(int file, int rank);
 
@@ -63,8 +76,8 @@ private:
     // Material *blackQueen;
     // Material *whitePawns[8];
     // Material *blackPawns[8];
-    // Material *whiteKing;
-    // Material *blackKing;
+    Material *whiteKing_;
+    Material *blackKing_;
     // Material *whiteBishop[2];
     // Material *blackBishop[2];
     // Material *whiteRook[2];
@@ -101,5 +114,37 @@ private:
     void rookAttack(int file, int rank);
 
     void queenAttack(int file, int rank);
+
+    bool isVulnerable(bool);
+
+    bool checkForAttackers(int, int, bool);
+
+    bool horseAttackers(int, int, bool);
+
+    bool queenAttackers(int, int, bool);
+
+    bool pawnAttackers(int, int, bool);
+
+    bool verticalUpAttacker(int, int, int);
+
+    bool verticalDownAttacker(int, int, int);
+
+    bool horizontalLeftAttacker(int, int, int);
+
+    bool horizontalRightAttacker(int, int, int);
+
+    bool diagonallyNorthWestAttacker(int, int, int);
+
+    bool diagonallyNorthEastAttacker(int, int, int);
+
+    bool diagonallySouthEastAttacker(int, int, int);
+
+    bool diagonallySouthWestAttacker(int, int, int);
+
+    bool attackSquare(int, int, Material*);
+
+    bool kingAttacker(int, int, bool);
+
+
 
 };

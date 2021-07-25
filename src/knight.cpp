@@ -12,8 +12,8 @@ std::string Knight::getHTML()
     return colored_ ? "&#9816;" : "&#9822;";
 }
 
-char Knight::getTypeOfMaterial(){
-    return colored_ ? 'N' : 'n';
+int Knight::getint(){
+    return colored_ ? whiteKnight : blackKnight;
 }
 
 bool Knight::isColored() {

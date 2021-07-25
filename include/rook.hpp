@@ -16,7 +16,7 @@ public:
     // std::function<void(Chessboard *)> projectAttackFunction();
 
     std::string getHTML();
-    char getTypeOfMaterial();
+    int getint();
     bool isEnemy(Material* target);
     bool isColored();
     private:

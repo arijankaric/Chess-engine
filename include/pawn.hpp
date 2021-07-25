@@ -12,7 +12,7 @@ public:
     // void projectAttack(Chessboard& mainBoard);
     std::string getHTML();
     Pawn(int file, int rank, bool colored, bool facing);
-    char getTypeOfMaterial();
+    int getint();
     bool isEnemy(Material* target);
     bool isColored();
 private:

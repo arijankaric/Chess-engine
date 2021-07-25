@@ -17,6 +17,9 @@ public:
     void setEnPassant();
     Material* getMaterial();
     bool isThereMaterial();
+    // void pickUp();
+    // Square& operator=(const Square&);
+    // Material* createMaterial(int);
 
 private:
     Material* chessman_{nullptr};

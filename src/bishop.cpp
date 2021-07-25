@@ -11,9 +11,9 @@ std::string Bishop::getHTML()
     return colored_ ? "&#9815;" : "&#9821;";
 }
 
-char Bishop::getTypeOfMaterial()
+int Bishop::getint()
 {
-    return colored_ ? 'B' : 'b';
+    return colored_ ? whiteBishop : blackBishop;
 }
 
 bool Bishop::isColored() {

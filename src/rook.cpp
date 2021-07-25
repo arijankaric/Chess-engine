@@ -27,8 +27,8 @@ std::string Rook::getHTML()
     return colored_ ? "&#9814;" : "&#9820;";
 }
 
-char Rook::getTypeOfMaterial(){
-    return colored_ ? 'R' : 'r';
+int Rook::getint(){
+    return colored_ ? whiteRook : blackRook;
 }
 
 bool Rook::isColored() {

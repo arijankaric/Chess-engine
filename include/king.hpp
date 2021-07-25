@@ -7,7 +7,7 @@ class King : public Material {
     King(int file, int rank, bool colored);
     // void projectAttack(Chessboard& mainBoard);
     std::string getHTML();
-    char getTypeOfMaterial();
+    int getint();
     bool isEnemy(Material* target);
     bool isColored();
     private:

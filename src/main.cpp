@@ -7,7 +7,6 @@
 
 int main(int argc, char *argv[])
 {
-    Game m;
     std::cout << argc << std::endl;
     if(argc > 1)
     {
@@ -18,6 +17,7 @@ int main(int argc, char *argv[])
     char choice;
     do
     {
+        Game m;
         std::cout << "Input Forsyth-Edwards chess notation: ";
         std::getline(std::cin, input);
         m.parseFEN(input);

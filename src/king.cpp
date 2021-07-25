@@ -26,7 +26,7 @@ bool King::isEnemy(Material *target)
     return true;
 }
 
-char King::getTypeOfMaterial()
+int King::getint()
 {
-    return colored_ ? 'K' : 'k';
+    return colored_ ? whiteKing : blackKing;
 }

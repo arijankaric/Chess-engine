@@ -17,9 +17,9 @@ std::string Pawn::getHTML()
     return colored_ ? "&#9817;" : "&#9823;";
 }
 
-char Pawn::getTypeOfMaterial(){
-    std::cout << "colored_: " << colored_ << std::endl;
-    return colored_ ? 'P' : 'p';
+int Pawn::getint(){
+    // std::cout << "colored_: " << colored_ << std::endl;
+    return colored_ ? whitePawn : blackPawn;
 }
 
 Pawn::Pawn(int file, int rank, bool colored, bool facing) : Material(file, rank, colored), facing_{facing} {}
