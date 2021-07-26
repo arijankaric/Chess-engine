@@ -2,10 +2,26 @@
 #include <fstream>
 #include <bitset>
 #include <chrono>
+#include <regex>
+#include <functional>
 
 #include <boost/spirit/home/x3.hpp>
 
 namespace x3 = boost::spirit::x3;
+namespace ascii = boost::spirit::x3::ascii;
+
+using ascii::space;
+using x3::_attr;
+using x3::phrase_parse;
+
+struct material_ : x3::symbols<unsigned>
+{
+    material_()
+    {
+        add("k", blackKing)("q", blackQueen)("r", blackRook)("b", blackBishop)("n", blackKnight)("p", blackPawn)("K", whiteKing)("Q", whiteQueen)("R", whiteRook)("B", whiteBishop)("N", whiteKnight)("P", whitePawn);
+    }
+
+} hundreds;
 
 Game::Game() {}
 Game::~Game()
@@ -79,8 +95,10 @@ void Game::generateHTMLDOC()
         std::cout << "#cry" << std::endl;
 }
 
-void Game::selectPosition(int file = 8, int rank = 8)
+void Game::selectPosition()
 {
+    int file = 8;
+    int rank = 8;
     char c;
     // std::cout << "Inside selectPosition file: " << file << " rank: " << rank << std::endl;
     while (!mainBoard.validAttacker(file, rank, whosMove))
@@ -106,68 +124,210 @@ void Game::selectPosition(int file = 8, int rank = 8)
 
 void Game::parseFEN(std::string &input)
 {
-    std::regex r("/| ");
-    for (int i = 7; i >= 0; --i)
-    {
-        std::sregex_iterator first(input.begin(), input.end(), r);
-        //int where = input.find("/");
-        auto where = first->position();
-        std::string send = input.substr(0, where);
-        input.erase(0, where + 1);
-        //std::cout << "input: " << input << std::endl;
-        parseFILE(send, i);
-    }
-
-    std::regex t("[a-h][1-8]");
-    // std::cout << "input enPassant: " << input << std::endl;
-    std::sregex_iterator second(input.begin(), input.end(), t);
-    if (!second->empty())
-    {
-        auto enPassant = second->str();
-        // std::cout << enPassant << std::endl;
-        int rank = enPassant[0];
-        int file = enPassant[1];
-        // std::cout << "enPassant file: " << file << " rank: " << rank;
-        Chessboard::convertPosition(rank, file);
-        // std::cout << "After conversion enPassant file: " << file << " rank: " << rank << std::endl;
-        mainBoard.setEnPassant(file, rank);
-    }
-    std::regex whosTurn("w|b");
-    std::sregex_iterator third(input.begin(), input.end(), whosTurn);
-    char whosMove = third->str()[0];
-    // std::cout << whosMove << std::endl;
-    if (whosMove == 'w')
-        Game::whosMove = true;
-    else
-        Game::whosMove = false;
-
-    std::regex castleRgx(" K?Q?k?q? ");
-    std::sregex_iterator fourth(input.begin(), input.end(), castleRgx);
-    if (!fourth->empty())
-    {
-        auto castleStr = fourth->str();
+    int file = 7;
+    int rank = 0;
+    // auto &m = mainBoard;
+    auto setFullSquareLambda = [&](auto &ctx)
+    { 
+        // std::cout << "Type of material\n" << _attr(ctx) << std::endl; 
+        Material* newMat = makeMaterial(file, rank, _attr(ctx));
+        garbageCollector.push_back(newMat);
+        mainBoard.setSquare(file, rank, newMat);
+        ++rank;
+    };
+    auto setEmptySquareLambda = [&](auto &ctx)
+    { 
+        // std::cout << "EmptySquare: " << _attr(ctx) << std::endl; 
         int i = 0;
-        while (castleStr[++i] != ' ')
+        while(_attr(ctx) > i)
         {
-            switch (castleStr[i])
-            {
-            case 'K':
-                castle |= whitekingcastle;
+            setEmpty(file, rank);
+            ++rank;
+            ++i;
+        }
+    };
+    auto decrementFileLambda = [&](auto &ctx)
+    { 
+        std::cout << "Decrement file in lambda\n";
+        --file; 
+        rank = 0;
+    };
+    auto setMoveLambda = [&](auto &ctx)
+    {
+        // std::cout << "inside setMoveLambda\n" << _attr(ctx) << std::endl;
+        switch(boost::get<char>(_attr(ctx)))
+        {
+            case 'w':
+                std::cout << "Whites move\n";
+                whosMove = true;
                 break;
-            case 'Q':
-                castle |= whitequeencastle;
-                break;
-            case 'k':
-                castle |= blackkingcastle;
-                break;
-            case 'q':
-                castle |= blackqueencastle;
+            case 'b':
+                std::cout << "Blacks move\n";
+                whosMove = false;
                 break;
             default:
-                std::cout << "error in castle switch\n";
-            }
+                std::cout << "Error in setMoveLambda, val:" << _attr(ctx) << std::endl;
         }
-    }
+    };
+    auto setCastleLambda = [&](auto &ctx)
+    {
+        switch (boost::get<char>(_attr(ctx)))
+        {
+        case 'K':
+            std::cout << "White king side can castle\n";
+            castle |= whitekingcastle;
+            break;
+        case 'Q':
+            std::cout << "White queen side can castle\n";
+            castle |= whitequeencastle;
+            break;
+        case 'k':
+            std::cout << "Black king side can castle\n";
+            castle |= blackkingcastle;
+            break;
+        case 'q':
+            std::cout << "Black queen side can castle\n";
+            castle |= blackqueencastle;
+            break;
+        default:
+            std::cout << "error in castle switch\n";
+        }
+    };
+    auto setEnPassantLambda = [&](auto &ctx) {
+        // std::cout << _attr(ctx) << std::endl;
+        int file = boost::fusion::at_c<1>(_attr(ctx));
+        int rank = boost::fusion::at_c<0>(_attr(ctx));
+        // std::cout << "file: " << file << "rank: " << rank << std::endl;
+        --file;
+        rank -= 97;
+        // std::cout << "file: " << file << "rank: " << rank << std::endl;
+        mainBoard.setEnPassant(file, rank);
+    };
+
+    auto itBegin = input.begin();
+    auto itEnd = input.end();
+
+    // rule<ID> const r = "some-name";
+    x3::rule<Chessboard, std::string> const FEN = "FEN";
+
+    auto const FEN_def =
+        // (x3::eps >>
+        //  x3::char_[setFullSquareLambda]
+
+        //  )
+        (+(+(x3::int8 [setEmptySquareLambda] | x3::alpha [setFullSquareLambda]) 
+                >> (x3::char_('/'))  [decrementFileLambda]) 
+                >> x3::string(" ")
+                >> x3::char_('w' | 'b') [setMoveLambda] 
+                >> -x3::char_('K') [setCastleLambda] 
+                >> -x3::char_('Q') [setCastleLambda] 
+                >> -x3::char_('k') [setCastleLambda] 
+                >> -x3::char_('q') [setCastleLambda]
+                >> x3::space
+                >> -(x3::char_ >> x3::int_) [setEnPassantLambda]
+        )
+        // <FEN> ::=  <Piece Placement>
+        //    ' ' <Side to move>
+        //    ' ' <Castling ability>
+        //    ' ' <En passant target square>
+        //    ' ' <Halfmove clock>
+        //    ' ' <Fullmove counter>
+        ;
+
+    auto spaceLambda = [&](auto &ctx){std::cout << "space\n";};
+    // x3::phrase_parse(itBegin, itEnd, FEN_def, space);
+    x3::parse(itBegin, itEnd, (+(x3::int8 [setEmptySquareLambda] | x3::alpha [setFullSquareLambda]) 
+                >> +(x3::char_('/') [decrementFileLambda] >> +(x3::int8 [setEmptySquareLambda] | x3::alpha [setFullSquareLambda])) 
+                >> x3::space [spaceLambda]
+                >> (x3::char_('w') | x3::char_('b')) [setMoveLambda] 
+                >> x3::space [spaceLambda]
+                >> -x3::char_('K') [setCastleLambda] 
+                >> -x3::char_('Q') [setCastleLambda] 
+                >> -x3::char_('k') [setCastleLambda] 
+                >> -x3::char_('q') [setCastleLambda]
+                >> x3::space [spaceLambda]
+                >> -(x3::char_ >> x3::int_) [setEnPassantLambda]));
+
+    // bool res = parse(itBegin, itEnd, FEN);
+    // if (res && itBegin == itEnd)
+    // {
+    //     std::cout << "-------------------------\n";
+    //     std::cout << "Parsing succeeded\n";
+    //     // std::cout << "result = " << result << std::endl;
+    //     std::cout << "-------------------------\n";
+    // }
+    // else
+    // {
+    //     std::string rest(itBegin, itEnd);
+    //     std::cout << "-------------------------\n";
+    //     std::cout << "Parsing failed\n";
+    //     std::cout << "stopped at: \": " << rest << "\"\n";
+    //     std::cout << "-------------------------\n";
+    // }
+
+    // std::regex r("/| ");
+    // for (int i = 7; i >= 0; --i)
+    // {
+    //     std::sregex_iterator first(input.begin(), input.end(), r);
+    //     //int where = input.find("/");
+    //     auto where = first->position();
+    //     std::string send = input.substr(0, where);
+    //     input.erase(0, where + 1);
+    //     //std::cout << "input: " << input << std::endl;
+    //     // std::cout << send << std::endl;
+    //     parseFILE(send, i);
+    // }
+
+    // std::regex t("[a-h][1-8]");
+    // // std::cout << "input enPassant: " << input << std::endl;
+    // std::sregex_iterator second(input.begin(), input.end(), t);
+    // if (!second->empty())
+    // {
+    //     auto enPassant = second->str();
+    //     // std::cout << enPassant << std::endl;
+    //     int rank = enPassant[0];
+    //     int file = enPassant[1];
+    //     // std::cout << "enPassant file: " << file << " rank: " << rank;
+    //     Chessboard::convertPosition(rank, file);
+    //     // std::cout << "After conversion enPassant file: " << file << " rank: " << rank << std::endl;
+    //     mainBoard.setEnPassant(file, rank);
+    // }
+    // std::regex whosTurn("w|b");
+    // std::sregex_iterator third(input.begin(), input.end(), whosTurn);
+    // char whosMove = third->str()[0];
+    // // std::cout << whosMove << std::endl;
+    // if (whosMove == 'w')
+    //     Game::whosMove = true;
+    // else
+    //     Game::whosMove = false;
+
+    // std::regex castleRgx(" K?Q?k?q? ");
+    // std::sregex_iterator fourth(input.begin(), input.end(), castleRgx);
+    // if (!fourth->empty())
+    // {
+    //     auto castleStr = fourth->str();
+    //     int i = 0;
+    //     while (castleStr[++i] != ' ')
+    //     {
+    //         switch (castleStr[i])
+    //         {
+    //         case 'K':
+    //             castle |= whitekingcastle;
+    //             break;
+    //         case 'Q':
+    //             castle |= whitequeencastle;
+    //             break;
+    //         case 'k':
+    //             castle |= blackkingcastle;
+    //             break;
+    //         case 'q':
+    //             castle |= blackqueencastle;
+    //             break;
+    //         default:
+    //             std::cout << "error in castle switch\n";
+    //         }
+    //     }
+    // }
     // std::cout << "castle: " << std::bitset<8>(castle) << std::endl;
 
     // bool r = x3::phrase_parse(input.begin(), input.end(), );
@@ -178,12 +338,8 @@ void Game::setEmpty(int file, int rank)
     mainBoard.setSquare(file, rank, nullptr);
 }
 
-void Game::setMaterial(int file, int rank, char *materialCode)
-{
-    makeMaterial(file, rank, materialCode);
-    // Material *argMaterial = makeMaterial(file, rank, materialCode);
-    // mainBoard.setSquare(file, rank, argMaterial);
-}
+// void Game::parseChar()
+// {}
 
 // FILE represents a ROW in chess
 void Game::parseFILE(std::string &input, int file)
@@ -206,7 +362,7 @@ void Game::parseFILE(std::string &input, int file)
         }
         else if (isalpha(input[i]))
         {
-            Material *newMat = makeMaterial(file, rank, &input.at(i));
+            Material *newMat = makeMaterial(file, rank, input.at(i));
             garbageCollector.push_back(newMat);
             mainBoard.setSquare(file, rank, newMat);
 
@@ -237,11 +393,11 @@ void Game::deleteMaterial(Material **parMaterial)
     }
 }
 
-Material *Game::makeMaterial(int file, int rank, char *materialCode)
+Material *Game::makeMaterial(int file, int rank, char materialCode)
 {
-    // std::cout << "Inside function makeMaterial: " << materialCode[0] << std::endl;
+    // std::cout << "Inside function makeMaterial: " << materialCode << std::endl;
     Material *materialPtr;
-    switch (materialCode[0])
+    switch (materialCode)
     {
     case 'r':
         materialPtr = new Rook(file, rank, false);
@@ -292,9 +448,9 @@ Material *Game::makeMaterial(int file, int rank, char *materialCode)
         // mainBoard.setSquare(file, rank, materialPtr);
         break;
     default:
-        std::cout << "Error in switch statement of function makeMaterial\n";
+        std::cout << "Error in switch statement of function makeMaterial\n"
+                  << materialCode << std::endl;
         exit(1); // Or let it go on and see where it leads
-        break;
     }
     return materialPtr;
 }
@@ -490,9 +646,9 @@ void Game::forward(int file, int rank)
 void Game::backward(int file, int rank)
 {
     Material *attacker = mainBoard.getSquare(file, rank).getMaterial();
-    if (!mainBoard.isEmpty(file - 1, rank + 1) || mainBoard.isEnPassant(file -1, rank +1))
+    if (!mainBoard.isEmpty(file - 1, rank + 1) || mainBoard.isEnPassant(file - 1, rank + 1))
         attackSquare(file - 1, rank + 1, attacker);
-    if (!mainBoard.isEmpty(file - 1, rank - 1) || mainBoard.isEnPassant(file-1, rank -1))
+    if (!mainBoard.isEmpty(file - 1, rank - 1) || mainBoard.isEnPassant(file - 1, rank - 1))
         attackSquare(file - 1, rank - 1, attacker);
     if (mainBoard.isEmpty(file - 1, rank))
     {

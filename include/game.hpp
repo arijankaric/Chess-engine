@@ -42,7 +42,7 @@ public:
     //     }
     // }
 
-    void selectPosition(int = 8, int = 8);
+    void selectPosition();
 
     void parseFEN(std::string &input);
     void generateHTMLDOC();
@@ -60,7 +60,6 @@ private:
 
     void setEmpty(int file, int rank);
 
-    void setMaterial(int file, int rank, char *materialCode);
 
     // FILE represents a ROW in chess
     void parseFILE(std::string &input, int file);
@@ -68,7 +67,7 @@ private:
     // Prolly won't need this since material is handled by the squares destructor
     void deleteMaterial(Material **parMaterial);
 
-    Material *makeMaterial(int file, int rank, char *materialCode);
+    Material *makeMaterial(int file, int rank, char materialCode);
 
     void projectAttack(int file, int rank);
 

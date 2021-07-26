@@ -38,3 +38,9 @@ NBr2N2/1P2n3/nK1P1kpP/PB2rP1P/1bp1Qp2/1P1ppp1p/P3q1bp/R6R w - - 0 1
 1K4b1/p1PPB1P1/pPP2QPP/nN6/p2npbkp/RBq2pp1/P2pN1rR/2r5 w - - 0 1
 r2n2Nb/r2PP3/1K5p/PQRpPp1p/qP1R1pB1/3b1pP1/1Npp1PnP/2B3k1 w - - 0 1
 1QBb1n1q/Kp2p1p1/PPNB4/1bPP3k/2Pr3P/2P1p1pp/2Rp1P1p/N2rRn2 w - - 0 1
+
+rnbqk1nr/pppppppp/8/8/5P1b/8/PPPPPBPP/RNBQK1NR w - - 0 1
+// pinovanje
+
+
+rnbqkbnr/ppp1pppp/8/8/3pP3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1

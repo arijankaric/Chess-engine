@@ -45,7 +45,7 @@ void benchmark()
 int main(int argc, char *argv[])
 {
 
-    benchmark();
+    // benchmark();
     // std::cout << argc << std::endl;
     if(argc > 1)
     {
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
         auto stop = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
         std::cout << "Time taken by function parseFen: " << duration.count() << " microseconds" << std::endl;
-
+        m.generateHTMLDOC();
         m.selectPosition();
         m.generateHTMLDOC();
         std::cout << "Wanna parse more FEN notations[Y\\n]: ";
