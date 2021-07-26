@@ -42,7 +42,7 @@ public:
     //     }
     // }
 
-    void selectPosition();
+    void selectPosition(int = 8, int = 8);
 
     void parseFEN(std::string &input);
     void generateHTMLDOC();

@@ -79,9 +79,8 @@ void Game::generateHTMLDOC()
         std::cout << "#cry" << std::endl;
 }
 
-void Game::selectPosition()
+void Game::selectPosition(int file = 8, int rank = 8)
 {
-    int file = 8, rank = 8;
     char c;
     // std::cout << "Inside selectPosition file: " << file << " rank: " << rank << std::endl;
     while (!mainBoard.validAttacker(file, rank, whosMove))
@@ -125,7 +124,7 @@ void Game::parseFEN(std::string &input)
     if (!second->empty())
     {
         auto enPassant = second->str();
-        std::cout << enPassant << std::endl;
+        // std::cout << enPassant << std::endl;
         int rank = enPassant[0];
         int file = enPassant[1];
         // std::cout << "enPassant file: " << file << " rank: " << rank;
