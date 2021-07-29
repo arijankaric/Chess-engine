@@ -13,6 +13,7 @@ public:
     std::string getHTML() const;
     Pawn(int file, int rank, bool colored, bool facing);
     int getint() const;
+    char getchar() const;
     bool isEnemy(Material* target) const;
     bool isColored() const;
 private:

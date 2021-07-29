@@ -21,7 +21,7 @@ public:
     void setSquare(int file, int rank, Material *chessman);
 
     bool validAttacker(int file, int rank, bool color);
-    Square& getSquare(int file, int rank);
+    const Square& getSquare(int file, int rank) const;
 
     void attackingSquare(int file, int rank);
     // We need to account for En passant target square
@@ -35,6 +35,9 @@ public:
     void moveMaterial(int file, int rank, Material* mat);
     bool checkForRange(int file, int rank) const;
     bool isEnPassant(int, int) const;
+    void removeMaterial(int file, int rank);
+    void invalidateAttacked();
+    bool anyAttackedSquare() const;
 
 
 

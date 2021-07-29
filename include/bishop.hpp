@@ -9,6 +9,7 @@ class Bishop : public Material {
     // void projectAttack(Chessboard& mainBoard);
     std::string getHTML() const;
     int getint() const;
+    char getchar() const;
     bool isEnemy(Material* target) const;
     bool isColored() const;
     private:

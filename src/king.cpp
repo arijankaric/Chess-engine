@@ -30,3 +30,8 @@ int King::getint() const
 {
     return colored_ ? whiteKing : blackKing;
 }
+
+char King::getchar() const
+{
+    return colored_ ? 'K' : 'k';
+}

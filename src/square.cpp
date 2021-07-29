@@ -81,6 +81,12 @@ void Square::setMaterial(Material *chessman)
     chessman_ = chessman;
 }
 
+void Square::removeMaterial()
+{
+    delete chessman_;
+    chessman_ = nullptr;
+}
+
 void Square::init(int f, int r, bool colored)
 {
     file_ = f;
@@ -156,7 +162,17 @@ bool Square::isThereMaterial() const
 
 bool Square::isEnPassant() const
 {
-    return enPassant_ ? true : false;
+    return enPassant_;
+}
+
+bool Square::isAttacked() const
+{
+    return attacked_;
+}
+
+void Square::setAttacked(bool attacked)
+{
+    attacked_ = attacked;
 }
 
 // void Square::pickUp()

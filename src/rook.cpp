@@ -41,3 +41,8 @@ bool Rook::isEnemy(Material *target) const
         return false;
     return true;
 }
+
+char Rook::getchar() const
+{
+    return colored_ ? 'R' : 'r';
+}

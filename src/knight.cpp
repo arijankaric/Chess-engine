@@ -28,3 +28,8 @@ bool Knight::isEnemy(Material *target) const
         return false;
     return true;
 }
+
+char Knight::getchar() const
+{
+    return colored_ ? 'N' : 'n';
+}

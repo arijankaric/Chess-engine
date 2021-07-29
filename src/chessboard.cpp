@@ -31,10 +31,10 @@ void Chessboard::setSquare(int file, int rank, Material *chessman)
     squares[file][rank].setMaterial(chessman);
 }
 
-Square &Chessboard::getSquare(int file, int rank)
+const Square &Chessboard::getSquare(int file, int rank) const
 {
     if(checkForRange(file, rank))
-    return squares[file][rank];
+        return squares[file][rank];
     
     std::cout << "out of range getSquare\n";
     exit(1);
@@ -53,7 +53,6 @@ bool Chessboard::validAttacker(int file, int rank, bool color)
             return false;
         }
         // std::cout << "Inside validAttacker True" << std::endl;
-
         return true;
     }
     // std::cout << "Inside validAttacker False" << std::endl;
@@ -147,14 +146,42 @@ bool Chessboard::isEmpty(int file, int rank) const
 
 void Chessboard::moveMaterial(int file, int rank, Material *mat)
 {
-    // if(file, rank, )
     squares[mat->file_][mat->rank_].setMaterial(nullptr);
     mat->file_ = file;
     mat->rank_ = rank;
     squares[file][rank].setMaterial(mat);
 }
 
+void Chessboard::removeMaterial(int file, int rank)
+{
+    squares[file][rank].removeMaterial();
+}
+
 bool Chessboard::isEnPassant(int file, int rank) const
 {
     return squares[file][rank].isEnPassant();
+}
+
+void Chessboard::invalidateAttacked()
+{
+    for(int i = 0; i < FILES; ++i)
+    {
+        for(int j = 0; j < RANKS; ++j)
+        {
+            squares[i][j].setAttacked(false);
+        }
+    }
+}
+
+bool Chessboard::anyAttackedSquare() const
+{
+    for(int i = 0; i < FILES; ++i)
+    {
+        for(int j = 0; j < RANKS; ++j)
+        {
+            if(squares[i][j].isAttacked())
+                return true;
+        }
+    }
+    return false;
 }

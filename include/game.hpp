@@ -41,21 +41,31 @@ public:
     //         //whitePieces[i] = new Pawn();
     //     }
     // }
-
+    void playGame();
     void selectPosition();
+    bool moveAttacker(int, int);
+    void selectPositionToMove();
 
     void parseFEN(std::string &input);
+    void parseFENOld(std::string &input);
     void generateHTMLDOC();
+    std::string generateFEN() const;
 
 private:
     Chessboard mainBoard;
     Chessboard projectBoard;
-    std::vector<Material*> garbageCollector;
+    std::vector<Material*> garbageCollectorBlack;
+    std::vector<Material*> garbageCollectorWhite;
+    Material *selectedAttacker;
     // Material *blackMaterial[16];
     // Material *whiteMaterial[16];
 
     bool whosMove; // 0 - black, 1 - white
     int castle = 0b0000'0000;
+    int halfMoveClock = 0;
+    int fullMoveNumber = 1;
+    std::string enPassant;
+    bool hasMoves = false;
 
 
     void setEmpty(int file, int rank);
@@ -70,6 +80,16 @@ private:
     Material *makeMaterial(int file, int rank, char materialCode);
 
     void projectAttack(int file, int rank);
+    bool isValidAttackPosition(int, int) const;
+
+    bool isCheckMate() const;
+    bool anyMovesLeft();
+
+    
+    void setUpGame();
+
+    void congratulateToWinner() const;
+    bool draw();
 
     // Material *whiteQueen;
     // Material *blackQueen;

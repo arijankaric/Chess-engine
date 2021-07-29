@@ -27,3 +27,8 @@ bool Bishop::isEnemy(Material *target) const
         return false;
     return true;
 }
+
+char Bishop::getchar() const
+{
+    return colored_ ? 'B' : 'b';
+}

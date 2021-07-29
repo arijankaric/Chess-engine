@@ -58,6 +58,7 @@ class Material {
     // virtual void projectAttack(Chessboard&) = 0;
     virtual std::string getHTML() const = 0;
     virtual int getint() const = 0;
+    virtual char getchar() const = 0;
     virtual bool isColored() const = 0;
     virtual bool isEnemy(Material* target) const = 0;
     int file_;

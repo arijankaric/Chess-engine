@@ -29,3 +29,8 @@ bool Queen::isEnemy(Material *target) const
         return false;
     return true;
 }
+
+char Queen::getchar() const
+{
+    return colored_ ? 'Q' : 'q';
+}

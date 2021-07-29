@@ -36,3 +36,8 @@ bool Pawn::isEnemy(Material *target) const
         return false;
     return true;
 }
+
+char Pawn::getchar() const
+{
+    return colored_ ? 'P' : 'p';
+}

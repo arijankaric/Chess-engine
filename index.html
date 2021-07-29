@@ -171,11 +171,97 @@
             /* opacity: 1.0; */
             /* z-index: 100;  */
         }
+        /* input[type="text"]
+        {
+            background: #fff;
+            width: 340px;
+            height: 50px;
+            border: none;
+            outline: none;
+            padding: 0 25px;
+            border-radius: 25px 0 0 25px;
+        } */
+        .btn{
+            font-family: "Roboto", sans-serif;
+            font-size: 18px;
+            font-weight: bold;
+            background: #1E90FF;
+            width: 160px;
+            padding: 20px;
+            text-align: center;
+            text-decoration: none;
+            /* text-transform: uppercase; */
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            -webkit-transition-duration: 0.3s;    
+            transition-duration: 0.3s;
+            -webkit-transition-property: box-shadow, transform;
+            transition-property: box-shadow, transform;
+        }
+        .btn:hover, .btn:focus, .btn:active{
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            -webkit-transform: scale(1.1);
+            transform: scale(1.1);
+        }
+        .wrapper{
+            width: 450px;
+            background: #fff;
+            padding: 30px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .wrapper .input-data{
+            height:40px;
+            width: 100%;
+            position:relative;
+        }
+        .wrapper .input-data input{
+            height: 100%;
+            width: 100%;
+            border: none;
+            font-size: 17px;
+            border-bottom: 2px solid silver;
+        }
+        .input-data input:focus ~ label,
+        .input-data input:valid ~ label{
+            transform: translateY(-20px); 
+            font-size: 15px;
+            color: #4158d0;
+        }
+        .wrapper .input-data label{
+            position:absolute;
+            bottom:10px;
+            left:0;
+            color:grey;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+        .wrapper .input-data .underline{
+            position: absolute;
+            bottom: 0px;
+            height: 2px;
+            width: 100%;
+            background: red;
+
+        }
+        .input-data .underline:before{
+            position: absolute;
+            content: "";
+            height: 100%;
+            width: 100%;
+            background: #4158d0;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        .input-data input:focus ~ .underline:before,
+        .input-data input:focus ~ .underline:before{
+            transform: scaleX(1);
+        }
     </style>
 </head>
 
 <body>
-    <TABLE class="chessboard" style="width:800px;height:800px;" border=5 cellspacing=0>
+    <TABLE id="thetable" class="chessboard" style="width:800px;height:800px;" border=5 cellspacing=0>
         <TR>
             <TD class="white">&#9814;</TD>
             <TD class="black">&#9816;</TD>
@@ -352,6 +438,62 @@
         <div class="box"></div>
 
     </div> -->
+    <br><br><br><br>
+
+    <!-- <div class="wrapper">
+        <div class="input-data">
+            <input type="text" required>
+            <div class="underline"></div>
+            <label>FEN</label>
+        </div>
+    </div> -->
+
+
+    FEN: <input type="text" id="text1" name="text1" placeholder="Type in FEN Notation" autofocus>
+    <button class="btn" onclick="function1()"> Set material </button>
+
+    <!-- <div class="box">
+        FEN notation:
+        <form>
+            <input type="text" name="" placeholder="Type in FEN Notation">
+            <input type="submit" name="" value="Parse FEN">
+        </form>
+    </div> -->
+
+
 </body>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+    var t = document.getElementsByClassName("chessboard");
+    var trs = t[0].getElementsByTagName("tr");
+    var tds = null;
+
+    for (var i = 0; i < trs.length; i++) {
+        tds = trs[i].getElementsByTagName("td");
+        for (var n = 0; n < tds.length; n++) {
+            tds[n].onclick = function () { console.log(this.textContent); }
+        }
+    }
+
+    $("#thetable").find('tr').click(function () {
+        console.log('You clicked row ' + ($(this).index() + 1));
+    });
+
+    $("#thetable").find('td').click(function () {
+        console.log('You clicked column ' + ($(this).index() + 1));
+    })
+
+    function function1() {
+
+        var x = document.getElementById("text1").value;
+
+        if (x.length == "") {
+            console.log("input is empty");
+        } else {
+            console.log(x + " " + "fine");
+            return x;
+        }
+    }
+</script>
 
 </html>

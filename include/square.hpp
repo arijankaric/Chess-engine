@@ -18,6 +18,9 @@ public:
     Material* getMaterial() const;
     bool isThereMaterial() const;
     bool isEnPassant() const;
+    void removeMaterial();
+    bool isAttacked() const;
+    void setAttacked(bool);
     // void pickUp();
     // Square& operator=(const Square&);
     // Material* createMaterial(int);
