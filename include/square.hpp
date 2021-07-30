@@ -15,6 +15,7 @@ public:
     std::string getHTML() const;
     bool attackSquare(Material* attacker);
     void setEnPassant();
+    void clearEnPassant();
     Material* getMaterial() const;
     bool isThereMaterial() const;
     bool isEnPassant() const;

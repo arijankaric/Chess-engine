@@ -122,24 +122,61 @@ void Game::selectPositionToMove()
         ++fullMoveNumber;
     if ((selectedAttacker->getint() & (whitePawn | blackPawn)) || mainBoard.getSquare(file, rank).isThereMaterial())
         halfMoveClock = 0;
-    if((selectedAttacker->getint() & (whitePawn | blackPawn)) && abs(file - selectedAttacker->file_) == 2)
+    if ((selectedAttacker->getint() & (whitePawn | blackPawn)) && abs(file - selectedAttacker->file_) == 2)
     {
         // std::cout << "Inside enPassant if\n";
         int enPassantFile = 0;
-        if(file == 3)
+        // int enPassantArgument = 0;
+        if (file == 3)
+        {
             enPassantFile = 3;
-        else if(file == 4)
+            // enPassantArgument = 2;
+        }
+        else if (file == 4)
+        {
             enPassantFile = 6;
+            // enPassantArgument = 5;
+        }
         else
             std::cout << "Error in enPassant if statement, value: " << file << std::endl;
         c = rank + 97;
 
         enPassant = c + std::to_string(enPassantFile);
-        std::cout << enPassant << std::endl;
+        mainBoard.setEnPassant(enPassantFile - 1, rank);
+        // std::cout << enPassant << std::endl;
     }
+    else
+    {
+        enPassant = "-";
+    }
+
     // std::cout << "file: " << file << " rank: " << rank << std::endl;
     // auto start = std::chrono::high_resolution_clock::now();
+    auto distance = abs(rank - selectedAttacker->rank_);
     moveAttacker(file, rank);
+    if ((selectedAttacker->getint() & (whiteKing | blackKing)) && distance == 2)
+    {
+        if (selectedAttacker->isColored())
+        {
+            castle = castle & (blackkingcastle | blackqueencastle);
+        }
+        else
+        {
+            castle = castle & (whitekingcastle | whitequeencastle);
+        }
+
+        if (rank == 2)
+        {
+            selectedAttacker = mainBoard.getSquare(file, 0).getMaterial();
+            moveAttacker(file, rank + 1);
+        }
+        else if (rank == 6)
+        {
+            selectedAttacker = mainBoard.getSquare(file, 7).getMaterial();
+            moveAttacker(file, rank - 1);
+        }
+    }
+
     // mainBoard.moveMaterial(file, rank, selectedAttacker);
     // auto stop = std::chrono::high_resolution_clock::now();
     // auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
@@ -727,11 +764,11 @@ void Game::allAround(int file, int rank)
     attackSquare(file + 1, rank + 1, attacker);
     attackSquare(file + 1, rank, attacker);
     attackSquare(file + 1, rank - 1, attacker);
-    bool queenCastle = attackSquare(file, rank - 1, attacker);
+    bool queenCastle = attackSquare(file, rank - 1, attacker) && mainBoard.isAttacked(file, rank - 1);
     attackSquare(file - 1, rank - 1, attacker);
     attackSquare(file - 1, rank, attacker);
     attackSquare(file - 1, rank + 1, attacker);
-    bool kingCastle = attackSquare(file, rank + 1, attacker);
+    bool kingCastle = attackSquare(file, rank + 1, attacker) && mainBoard.isAttacked(file, rank + 1);
 
     if (isVulnerable(attacker->isColored()))
         return;
@@ -756,9 +793,9 @@ void Game::allAround(int file, int rank)
 void Game::forward(int file, int rank)
 {
     Material *attacker = mainBoard.getSquare(file, rank).getMaterial();
-    if (!mainBoard.isEmpty(file + 1, rank + 1))
+    if (!mainBoard.isEmpty(file + 1, rank + 1) || mainBoard.isEnPassant(file + 1, rank + 1))
         attackSquare(file + 1, rank + 1, attacker);
-    if (!mainBoard.isEmpty(file + 1, rank - 1))
+    if (!mainBoard.isEmpty(file + 1, rank - 1) || mainBoard.isEnPassant(file + 1, rank - 1))
         attackSquare(file + 1, rank - 1, attacker);
     if (mainBoard.isEmpty(file + 1, rank))
     {
@@ -971,9 +1008,23 @@ bool Game::moveAttacker(int file, int rank)
     if (!isValidAttackPosition(file, rank))
         return false;
 
-    Material* defeated = mainBoard.getSquare(file, rank).getMaterial();
+    Material *defeated = mainBoard.getSquare(file, rank).getMaterial();
 
-    if(whosMove)
+    if (mainBoard.isEnPassant(file, rank))
+    {
+        if (whosMove)
+        {
+            defeated = mainBoard.getSquare(file - 1, rank).getMaterial();
+            mainBoard.removeMaterial(file - 1, rank);
+        }
+        else
+        {
+            defeated = mainBoard.getSquare(file + 1, rank).getMaterial();
+            mainBoard.removeMaterial(file + 1, rank);
+        }
+    }
+
+    if (whosMove)
         garbageCollectorBlack.erase(std::remove(garbageCollectorBlack.begin(), garbageCollectorBlack.end(), defeated), garbageCollectorBlack.end());
     else
         garbageCollectorWhite.erase(std::remove(garbageCollectorWhite.begin(), garbageCollectorWhite.end(), defeated), garbageCollectorWhite.end());
@@ -1028,7 +1079,7 @@ void Game::playGame()
                 return;
             generateHTMLDOC();
             hasMoves = false;
-            while(!hasMoves)
+            while (!hasMoves)
                 selectPosition();
             generateHTMLDOC();
             selectPositionToMove();
@@ -1108,9 +1159,9 @@ void Game::setUpGame()
             return;
         case 1:
             std::cout << "Input FEN record for continuation: ";
-            std::getline(std::cin, inputFEN);            
+            std::getline(std::cin, inputFEN);
             parseFEN(inputFEN);
-            
+
             return;
         default:
             std::cout << "Inproper selection. Select again please pretty." << std::endl;
@@ -1139,33 +1190,33 @@ std::string Game::generateFEN() const
             }
         }
         if (countOfEmpty > 0)
-                {
-                    returnStr += std::to_string(countOfEmpty);
-                    countOfEmpty = 0;
-                }
+        {
+            returnStr += std::to_string(countOfEmpty);
+            countOfEmpty = 0;
+        }
         if (i > 0)
             returnStr += "/";
         else
             returnStr += " ";
     }
-    if(whosMove)
+    if (whosMove)
         returnStr += "w ";
     else
         returnStr += "b ";
-    
-    if(castle & whitekingcastle)
+
+    if (castle & whitekingcastle)
         returnStr += "K";
-    if(castle & whitequeencastle)
+    if (castle & whitequeencastle)
         returnStr += "Q";
-    if(castle & blackkingcastle)
+    if (castle & blackkingcastle)
         returnStr += "k";
-    if(castle & blackqueencastle)
+    if (castle & blackqueencastle)
         returnStr += "q";
-    if(!castle)
+    if (!castle)
         returnStr += "-";
     returnStr += " ";
 
-    returnStr += enPassant; 
+    returnStr += enPassant;
 
     returnStr += " ";
 

@@ -17,6 +17,7 @@ void Chessboard::transformSquare(int file, int rank, std::function<void(Square *
 
 void Chessboard::setEnPassant(int file, int rank)
 {
+    // std::cout << "setting EnPassant on file: " << file << " rank: " << rank << std::endl;
     squares[file][rank].setEnPassant();
 }
 
@@ -184,4 +185,14 @@ bool Chessboard::anyAttackedSquare() const
         }
     }
     return false;
+}
+
+void Chessboard::clearEnPassant(int file, int rank)
+{
+    squares[file][rank].clearEnPassant();
+}
+
+bool Chessboard::isAttacked(int file, int rank)
+{
+    return squares[file][rank].isAttacked();
 }

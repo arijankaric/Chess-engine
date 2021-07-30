@@ -175,6 +175,11 @@ void Square::setAttacked(bool attacked)
     attacked_ = attacked;
 }
 
+void Square::clearEnPassant()
+{
+    enPassant_ = false;
+}
+
 // void Square::pickUp()
 // {
 //     chessman_ = nullptr;

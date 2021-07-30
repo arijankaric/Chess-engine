@@ -38,6 +38,8 @@ public:
     void removeMaterial(int file, int rank);
     void invalidateAttacked();
     bool anyAttackedSquare() const;
+    void clearEnPassant(int, int);
+    bool isAttacked(int, int);
 
 
 
