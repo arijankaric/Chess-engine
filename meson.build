@@ -1,4 +1,4 @@
-project('zadaca2', 'cpp', default_options : ['cpp_std=c++14', 'buildtype=debugoptimized'])
+project('chessengine', 'cpp', default_options : ['cpp_std=c++14', 'buildtype=debugoptimized'])
 
 inc = include_directories('include', 'resources')
 
@@ -18,4 +18,4 @@ project_source_files = [
     'src/square.cpp'
 ]
 
-testexe = executable('zadaca2', project_source_files, include_directories : inc)
+testexe = executable('chessengine', project_source_files, include_directories : inc)
